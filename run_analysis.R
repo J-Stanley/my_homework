@@ -17,7 +17,7 @@ subjectnames_file <- rbind(subjecttrain, subjecttest)
 subjects <- subjectnames_file$V1                                               
 mean <- sapply(x[,1:561], mean)                                                                     ## step 2
 sd <- sapply(x[,1:561], sd)
-meanAndsd <- rbind(mean, sd)
+meanAndsd <- rbind(mean, sd)   ## extract the mean and sd of all measurements
 for(i in 1:6){
     for(j in 1:length(activitynames)){
         if(activitynames[j] == i)
@@ -26,19 +26,16 @@ for(i in 1:6){
 }  
 newx <- cbind(activitynames, x)                                                                     ## step 3
 newx2 <- cbind(subjects, x)                                                                         ## step 4
-newx3 <- cbind(activitynames, newx2)                                                                ## step 5
+newx3 <- cbind(activitynames, newx2)    ## this Uses descriptive activity names to name the activities in the data set and appropriately labels the data set with descriptive variable names.                                                           ## step 5
 newx4 <- data.frame()
-for(i in 1:6){
+for(i in 1:6){                          ## using a for loop to find all the measurements of a specific activity and subject and then calculate the average(mean) of those measurements 
     for(j in 1:30){
         a <- t(sapply(newx3[newx3$subjects == j & newx3$activitynames == activities[i],3:563],mean))
-        b <- cbind(activities[i], j, "mean", a)
-        c <- t(sapply(newx3[newx3$subjects == j & newx3$activitynames == activities[i],3:563],sd))
-        d <- cbind(activities[i], j, "sd", c)
+        b <- cbind(activities[i], j, a)
         newx4 <- rbind(newx4, b)
-        newx4 <- rbind(newx4, d)
     }
-}
+}                                    
 colnames(newx4)[1] <- "activities"
 colnames(newx4)[2] <- "subjects"
-colnames(newx4)[3] <- "measurements"
-tidyset <- newx4
+tidyset <- newx4                       ## in this data frame, the value of each measurement is the average of it of the specific activity and subject 
+write.table(tidyset, file = "./tidy_data.txt")
